@@ -53,6 +53,6 @@ for package in distro.source_packages.values():
 
     data = [data]
 
-    tue_get.mkdir_p(os.path.join(target_path, 'ros-' + package.name))
+    tue_get.utils.mkdir_p(os.path.join(target_path, 'ros-' + package.name))
     with open(os.path.join(target_path, 'ros-' + package.name, 'install.yaml'), 'w') as f:
         dump(data, f, default_flow_style=False)

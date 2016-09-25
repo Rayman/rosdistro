@@ -4,7 +4,7 @@ from __future__ import print_function
 import os
 
 import tue_get
-from tue_get import get_rosdep
+from tue_get.utils import get_rosdep
 from yaml import load, dump
 
 
@@ -221,7 +221,7 @@ if __name__ == '__main__':
         }
     }
 
-    with open(os.path.join(os.path.dirname(tue_get.__file__), '..', '..', 'data', 'distro.template')) as f:
+    with open(os.path.join(os.path.dirname(tue_get.__file__), '..', '..', 'rosdistro', 'data', 'distro.template')) as f:
         template = f.read()
 
     d = dump({'repositories': repositories}, default_flow_style=False)
