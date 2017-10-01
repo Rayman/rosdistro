@@ -3,14 +3,13 @@ from __future__ import print_function
 
 import os
 
-import tue_get
-from tue_get.utils import get_rosdep
+from ros_get.utils import get_rosdep
 from yaml import load, dump
 
 
-def parse_ros_source(type, url, subdir=None, **kwargs):
+def parse_ros_source(type, url, subdir=None, version='master', **kwargs):
     if kwargs:
-        raise ValueError('unexpected kwargs')
+        raise ValueError('unexpected kwargs: %s' % kwargs)
 
     print('\tsource:', type, url)
 
@@ -19,7 +18,7 @@ def parse_ros_source(type, url, subdir=None, **kwargs):
             'source': {
                 'type': type,
                 'url': url,
-                'version': 'master',
+                'version': version,
             }
         }
     else:
@@ -76,8 +75,10 @@ def parse_target_source(target):
             print('\tmetatarget', target)
         elif target['type'] == 'ros-rosbuild':
             print('\trosbuild target')
+        elif target['type'] == 'pip':
+            print('\tpip', target)
         else:
-            raise ValueError('unknown target type')
+            raise ValueError('unknown target type: %s' % target['type'])
     else:
         print('\tmultiple targets found')
 
@@ -139,7 +140,7 @@ def parse_target(path):
 
 
 if __name__ == '__main__':
-    data_path = os.path.join(os.path.dirname(tue_get.__file__), '..', '..', 'data', 'tue-env')
+    data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'tue-env')
     target_path = os.path.join(data_path, 'installer', 'targets')
 
     targets = (os.path.join(target_path, o) for o in os.listdir(target_path))
@@ -209,7 +210,6 @@ if __name__ == '__main__':
             raise ValueError()
 
     # patch distro file
-    repositories['executive_smach']['source']['version'] = 'indigo-devel'
     repositories['scan_tools']['source']['version'] = 'indigo'
     repositories['navigation_layers']['source']['version'] = 'indigo'
     repositories['navigation']['source']['version'] = 'hydro-devel'
@@ -221,15 +221,14 @@ if __name__ == '__main__':
         }
     }
 
-    with open(os.path.join(os.path.dirname(tue_get.__file__), '..', '..', 'rosdistro', 'data', 'distro.template')) as f:
+    with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'distro.template')) as f:
         template = f.read()
 
     d = dump({'repositories': repositories}, default_flow_style=False)
     distro = template.format(repositories=d)
 
     # write distro file
-    distro_file = os.path.join(os.path.dirname(tue_get.__file__), '..', '..', 'rosdistro', 'kinetic',
-                               'distribution.yaml')
+    distro_file = os.path.join(os.path.dirname(__file__), '..', 'kinetic', 'distribution.yaml')
     with open(distro_file, 'w') as f:
         f.write(distro)
 
