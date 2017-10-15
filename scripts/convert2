@@ -1,0 +1,168 @@
+#!/usr/bin/env python
+from __future__ import print_function
+
+
+import os
+import logging
+import yaml
+import logging.config
+import os
+from argparse import ArgumentParser
+from ros_get.commands import install, update, upgrade, remove
+from ros_get.workspace import create, switch, locate, save
+from collections import namedtuple
+
+logging.config.dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'colored': {
+            '()': 'colorlog.ColoredFormatter',
+            'format': "%(log_color)s[%(levelname)s] %(name)s: %(message)s",
+        }
+    },
+    'handlers': {
+        'stream': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'colored',
+        },
+    },
+    'loggers': {
+        'vcstool.executor': {
+            'level': 'INFO',
+        }
+    },
+    'root': {
+        'handlers': ['stream'],
+        'level': 'INFO',
+    },
+})
+
+logger = logging.getLogger(__name__)
+
+
+def parse_target(path):
+    basename = os.path.basename(path)
+    logger.debug("parsing '%s'", basename)
+
+    ret = None
+    try:
+        with open(os.path.join(path, 'install.yaml')) as f:
+            target = yaml.load(f)
+            ret = parse_target_yaml(target)
+    except IOError:
+        pass
+    try:
+        with open(os.path.join(path, 'install.bash')) as f:
+            if ret:
+                logger.warn("also install.bash found for '%s'", basename)
+                return ret
+            else:
+                return parse_target_bash(f.read())
+    except IOError:
+        if ret:
+            return ret
+        else:
+            logger.debug('install.bash not found')
+
+    logger.warn("no target found for '%s'", basename)
+    return None
+
+
+def parse_target_bash(f):
+    lines = f.splitlines()
+    if len(lines) == 1:
+        logger.warn('unknown setup.bash')
+    else:
+        logger.info("complex install.bash found")
+    return True
+
+
+
+def parse_target_yaml(target):
+    if len(target) == 1:
+        parse_single_target(target[0])
+    else:
+        parse_meta_target(target)
+
+def parse_single_target(target):
+    if target['type'] == 'ros':
+        return parse_ros_target(**target)
+    elif target['type'] == 'system':
+        return parse_system_target(**target)
+    elif target['type'] == 'target':
+        return parse_redirect_target(**target)
+    elif target['type'] == 'ros-rosbuild':
+        logger.error('rosbuild target')
+        return
+    elif target['type'] == 'pip':
+        return parse_pip_target(**target)
+    else:
+        logger.error('unknown target type: %s' % target['type'])
+
+
+def parse_ros_target(type, source, **kwargs):
+    if kwargs:
+        raise ValueError('Unexpected kwargs')
+
+    return True
+
+def parse_system_target(type, name, **kwargs):
+    if kwargs:
+        raise ValueError('Unexpected kwargs')
+
+    return True
+
+def parse_redirect_target(type, name, **kwargs):
+    if kwargs:
+        raise ValueError('Unexpected kwargs')
+    return Redirect(name)
+
+def parse_pip_target(type, name, **kwargs):
+    return True
+
+def parse_meta_target(targets):
+    deps = []
+    for target in targets:
+        dep = parse_single_target(target)
+        if dep:
+            deps.append(dep)
+        else:
+            logger.error('unexpected target found in metatarget: %s', target)
+
+    return MetaPackage(deps)
+
+
+class Target(type):
+    pass
+
+class MetaPackage(Target):
+    def __init__(self, dependencies):
+        self.dependencies = dependencies
+
+
+class Redirect(Target):
+    def __init__(self, name):
+        self.name = name
+
+
+if __name__ == '__main__':
+    parser = ArgumentParser()
+    parser.add_argument('-v', '--verbose', action='store_true')
+    args = parser.parse_args()
+
+    if args.verbose:
+        logging.getLogger().setLevel(logging.DEBUG)
+
+
+    data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'tue-env')
+    target_path = os.path.join(data_path, 'installer', 'targets')
+
+    targets = (os.path.join(target_path, o) for o in os.listdir(target_path))
+    targets = (t for t in targets if os.path.isdir(t))
+
+    for target in targets:
+        t = parse_target(target)
+        print(t)
+        if isinstance(t, MetaPackage):
+            print(t)

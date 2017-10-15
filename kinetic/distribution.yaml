@@ -27,11 +27,6 @@ repositories:
       type: git
       url: https://github.com/tue-robotics/amigo_description.git
       version: master
-  amigo_ed_tutorials:
-    source:
-      type: git
-      url: https://github.com/tue-robotics/amigo_ed_tutorials.git
-      version: master
   amigo_force_controller:
     source:
       type: git
@@ -56,11 +51,6 @@ repositories:
     source:
       type: git
       url: https://github.com/tue-robotics/amigo_msgs.git
-      version: master
-  amigo_parameters:
-    source:
-      type: git
-      url: https://github.com/tue-robotics/amigo_parameters.git
       version: master
   amigo_ref_interpolator:
     source:
@@ -177,11 +167,6 @@ repositories:
       type: git
       url: https://github.com/tue-robotics/ed_sensor_integration.git
       version: master
-  ed_simulator:
-    source:
-      type: git
-      url: https://github.com/tue-robotics/ed_simulator.git
-      version: master
   ed_tutorials:
     source:
       type: git
@@ -262,11 +247,6 @@ repositories:
       type: git
       url: https://github.com/tue-robotics/navigation.git
       version: hydro-devel
-  navigation_gui:
-    source:
-      type: git
-      url: https://github.com/tue-robotics/navigation_gui.git
-      version: master
   navigation_layers:
     source:
       type: git
@@ -412,16 +392,6 @@ repositories:
       type: git
       url: https://github.com/smits/soem.git
       version: master
-  swi_prolog:
-    source:
-      type: git
-      url: https://github.com/tue-robotics/swi_prolog.git
-      version: master
-  swri_console:
-    source:
-      type: git
-      url: https://github.com/swri-robotics/swri_console.git
-      version: master
   text_to_speech:
     source:
       type: git
@@ -461,6 +431,11 @@ repositories:
     source:
       type: git
       url: https://github.com/tue-robotics/tue_control_rtt_msgs.git
+      version: master
+  tue_docs:
+    source:
+      type: git
+      url: https://github.com/tue-robotics/tue_docs.git
       version: master
   tue_ethercat_drivers:
     source:
