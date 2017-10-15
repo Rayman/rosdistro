@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
-
-import os
 import logging
-import yaml
 import logging.config
 import os
+import os
+import yaml
 from argparse import ArgumentParser
+from collections import namedtuple
+from copy import deepcopy
+from pprint import pformat
+
 from ros_get.commands import install, update, upgrade, remove
 from ros_get.workspace import create, switch, locate, save
-from collections import namedtuple
 
 logging.config.dictConfig({
     'version': 1,
@@ -39,6 +41,36 @@ logging.config.dictConfig({
 })
 
 logger = logging.getLogger(__name__)
+
+
+class Target(object):
+    def __repr__(self):
+        return "%s(%s)" % (self.__class__.__name__, pformat(self.__dict__))
+
+
+class MetaPackage(Target):
+    def __init__(self, dependencies):
+        self.dependencies = dependencies
+
+
+class Package(Target):
+    def __init__(self, name):
+        self.name = name
+
+
+class System(Target):
+    def __init__(self, name):
+        self.name = name
+
+
+class Pip(Target):
+    def __init__(self, name):
+        self.name = name
+
+
+class Redirect(Target):
+    def __init__(self, name):
+        self.name = name
 
 
 def parse_target(path):
@@ -75,51 +107,57 @@ def parse_target_bash(f):
         logger.warn('unknown setup.bash')
     else:
         logger.info("complex install.bash found")
-    return True
-
+    return None
 
 
 def parse_target_yaml(target):
     if len(target) == 1:
-        parse_single_target(target[0])
+        return parse_single_target(target[0])
     else:
-        parse_meta_target(target)
+        return parse_meta_target(target)
+
 
 def parse_single_target(target):
-    if target['type'] == 'ros':
+    target = target.copy()
+    tt = target.pop('type')
+
+    if tt == 'ros':
         return parse_ros_target(**target)
-    elif target['type'] == 'system':
+    elif tt == 'system':
         return parse_system_target(**target)
-    elif target['type'] == 'target':
+    elif tt == 'target':
         return parse_redirect_target(**target)
-    elif target['type'] == 'ros-rosbuild':
+    elif tt == 'ros-rosbuild':
         logger.error('rosbuild target')
-        return
-    elif target['type'] == 'pip':
+    elif tt == 'pip':
         return parse_pip_target(**target)
     else:
-        logger.error('unknown target type: %s' % target['type'])
+        logger.error('unknown target type: %s' % tt)
 
 
-def parse_ros_target(type, source, **kwargs):
-    if kwargs:
-        raise ValueError('Unexpected kwargs')
+def parse_ros_target(source, **kwargs):
+    assert not kwargs, "Unexpected kwargs: %s" % kwargs
 
-    return True
+    return source
 
-def parse_system_target(type, name, **kwargs):
-    if kwargs:
-        raise ValueError('Unexpected kwargs')
 
-    return True
+def parse_system_target(name, **kwargs):
+    assert not kwargs, "Unexpected kwargs: %s" % kwargs
 
-def parse_redirect_target(type, name, **kwargs):
-    if kwargs:
-        raise ValueError('Unexpected kwargs')
+    return System(name)
+
+
+def parse_redirect_target(name, **kwargs):
+    assert not kwargs, "Unexpected kwargs: %s" % kwargs
+
     return Redirect(name)
 
-def parse_pip_target(type, name, **kwargs):
-    return True
+
+def parse_pip_target(name, **kwargs):
+    assert not kwargs, "Unexpected kwargs: %s" % kwargs
+
+    return Pip(name)
+
 
 def parse_meta_target(targets):
     deps = []
@@ -129,21 +167,7 @@ def parse_meta_target(targets):
             deps.append(dep)
         else:
             logger.error('unexpected target found in metatarget: %s', target)
-
     return MetaPackage(deps)
-
-
-class Target(type):
-    pass
-
-class MetaPackage(Target):
-    def __init__(self, dependencies):
-        self.dependencies = dependencies
-
-
-class Redirect(Target):
-    def __init__(self, name):
-        self.name = name
 
 
 if __name__ == '__main__':
@@ -154,7 +178,6 @@ if __name__ == '__main__':
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
 
-
     data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'tue-env')
     target_path = os.path.join(data_path, 'installer', 'targets')
 
@@ -164,5 +187,5 @@ if __name__ == '__main__':
     for target in targets:
         t = parse_target(target)
         print(t)
-        if isinstance(t, MetaPackage):
-            print(t)
+        #if isinstance(t, MetaPackage):
+        #    print(t)
