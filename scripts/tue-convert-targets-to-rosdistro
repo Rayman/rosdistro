@@ -148,8 +148,11 @@ def parse_meta_target(key, targets):
             deps.append(name)
         elif isinstance(dep, System):
             deps.append(dep.name)
+        elif isinstance(dep, ROSSystem):
+            deps.append(dep.name)
         else:
-            logger.error('unexpected target found in metatarget: %s', target)
+            logger.error("unexpected target found in metatarget '%s', skipping", target)
+            return None
     return MetaPackage(key, deps)
 
 
