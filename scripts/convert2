@@ -12,8 +12,6 @@ from pprint import pformat
 
 import yaml
 from colorlog import ColoredFormatter
-from ros_get.commands import install, update, upgrade, remove
-from ros_get.workspace import create, switch, locate, save
 from tqdm import tqdm
 
 
@@ -58,8 +56,16 @@ class MetaPackage(Target):
 
 
 class Package(Target):
-    def __init__(self, source):
-        self.source = source
+    def __init__(self, type, url, version, subdir):
+        self.type = type
+        self.url = url
+        self.version = version
+        self.subdir = subdir
+
+
+class ROSSystem(Target):
+    def __init__(self, name):
+        self.name = name
 
 
 class System(Target):
@@ -142,7 +148,19 @@ def parse_single_target(target):
 def parse_ros_target(source, **kwargs):
     assert not kwargs, "Unexpected kwargs: %s" % kwargs
 
-    return Package(source)
+    source = source.copy()
+    tt = source.pop('type')
+
+    # remove dash in sub-dir
+    if 'sub-dir' in source:
+        source['subdir'] = source.pop('sub-dir')
+
+    if tt == 'git':
+        return parse_source(tt, **source)
+    elif tt == 'system':
+        return parse_ros_system(**source)
+    else:
+        assert False, tt
 
 
 def parse_system_target(name, **kwargs):
@@ -176,6 +194,18 @@ def parse_meta_target(targets):
     return MetaPackage(deps)
 
 
+def parse_source(type, url, version='master', subdir=None, **kwargs):
+    assert not kwargs, "Unexpected kwargs: %s" % kwargs
+
+    return Package(type, url, version, subdir)
+
+
+def parse_ros_system(name, **kwargs):
+    assert not kwargs, "Unexpected kwargs: %s" % kwargs
+
+    return ROSSystem(name)
+
+
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('-v', '--verbose', action='store_true')
@@ -195,12 +225,13 @@ if __name__ == '__main__':
     pkgs = []
     for target in tqdm(targets):
         t = parse_target(target)
-        # print(t)
         if isinstance(t, MetaPackage):
             mps.append(t)
         elif isinstance(t, Package):
             pkgs.append(t)
         elif isinstance(t, System):
+            rosdeps.append(t)
+        elif isinstance(t, ROSSystem):
             rosdeps.append(t)
         elif isinstance(t, Pip):
             rosdeps.append(t)
