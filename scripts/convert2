@@ -46,17 +46,22 @@ logger = logging.getLogger(__name__)
 
 
 class Target(object):
+    def __init__(self, key):
+        self.key = key
+
     def __repr__(self):
         return "%s(%s)" % (self.__class__.__name__, pformat(self.__dict__))
 
 
 class MetaPackage(Target):
-    def __init__(self, dependencies):
+    def __init__(self, key, dependencies):
+        super(MetaPackage, self).__init__(key)
         self.dependencies = dependencies
 
 
 class Package(Target):
-    def __init__(self, type, url, version, subdir):
+    def __init__(self, key, type, url, version, subdir):
+        super(Package, self).__init__(key)
         self.type = type
         self.url = url
         self.version = version
@@ -64,22 +69,26 @@ class Package(Target):
 
 
 class ROSSystem(Target):
-    def __init__(self, name):
+    def __init__(self, key, name):
+        super(ROSSystem, self).__init__(key)
         self.name = name
 
 
 class System(Target):
-    def __init__(self, name):
+    def __init__(self, key, name):
+        super(System, self).__init__(key)
         self.name = name
 
 
 class Pip(Target):
-    def __init__(self, name):
+    def __init__(self, key, name):
+        super(Pip, self).__init__(key)
         self.name = name
 
 
 class Redirect(Target):
-    def __init__(self, name):
+    def __init__(self, key, name):
+        super(Redirect, self).__init__(key)
         self.name = name
 
 
@@ -91,7 +100,7 @@ def parse_target(path):
     try:
         with open(os.path.join(path, 'install.yaml')) as f:
             target = yaml.load(f)
-            ret = parse_target_yaml(target)
+            ret = parse_target_yaml(basename, target)
     except IOError:
         pass
     try:
@@ -107,9 +116,9 @@ def parse_target(path):
             logger.debug('install.bash not found')
 
     if ret:
-        return basename, ret
+        return ret
     logger.warn("no target found for '%s'", basename)
-    return basename, None
+    return None
 
 
 def parse_target_bash(f):
@@ -121,71 +130,17 @@ def parse_target_bash(f):
     return None
 
 
-def parse_target_yaml(target):
+def parse_target_yaml(key, target):
     if len(target) == 1:
-        return parse_single_target(target[0])
+        return parse_single_target(key, target[0])
     else:
-        return parse_meta_target(target)
+        return parse_meta_target(key, target)
 
 
-def parse_single_target(target):
-    target = target.copy()
-    tt = target.pop('type')
-
-    if tt == 'ros':
-        return parse_ros_target(**target)
-    elif tt == 'system':
-        return parse_system_target(**target)
-    elif tt == 'target':
-        return parse_redirect_target(**target)
-    elif tt == 'ros-rosbuild':
-        logger.error('rosbuild target')
-    elif tt == 'pip':
-        return parse_pip_target(**target)
-    else:
-        logger.error('unknown target type: %s' % tt)
-
-
-def parse_ros_target(source, **kwargs):
-    assert not kwargs, "Unexpected kwargs: %s" % kwargs
-
-    source = source.copy()
-    tt = source.pop('type')
-
-    # remove dash in sub-dir
-    if 'sub-dir' in source:
-        source['subdir'] = source.pop('sub-dir')
-
-    if tt == 'git':
-        return parse_source(tt, **source)
-    elif tt == 'system':
-        return parse_ros_system(**source)
-    else:
-        assert False, tt
-
-
-def parse_system_target(name, **kwargs):
-    assert not kwargs, "Unexpected kwargs: %s" % kwargs
-
-    return System(name)
-
-
-def parse_redirect_target(name, **kwargs):
-    assert not kwargs, "Unexpected kwargs: %s" % kwargs
-
-    return Redirect(name)
-
-
-def parse_pip_target(name, **kwargs):
-    assert not kwargs, "Unexpected kwargs: %s" % kwargs
-
-    return Pip(name)
-
-
-def parse_meta_target(targets):
+def parse_meta_target(key, targets):
     deps = []
     for target in targets:
-        dep = parse_single_target(target)
+        dep = parse_single_target(key, target)
         if isinstance(dep, Redirect):
             name = dep.name
             if name.startswith('ros-'):
@@ -195,19 +150,72 @@ def parse_meta_target(targets):
             deps.append(dep.name)
         else:
             logger.error('unexpected target found in metatarget: %s', target)
-    return MetaPackage(deps)
+    return MetaPackage(key, deps)
 
 
-def parse_source(type, url, version='master', subdir=None, **kwargs):
+def parse_single_target(key, target):
+    target = target.copy()
+    tt = target.pop('type')
+
+    if tt == 'ros':
+        return parse_ros_target(key, **target)
+    elif tt == 'system':
+        return parse_system_target(key, **target)
+    elif tt == 'target':
+        return parse_redirect_target(key, **target)
+    elif tt == 'ros-rosbuild':
+        logger.error('rosbuild target')
+    elif tt == 'pip':
+        return parse_pip_target(key, **target)
+    else:
+        logger.error('unknown target type: %s' % tt)
+
+
+def parse_ros_target(key, source, **kwargs):
     assert not kwargs, "Unexpected kwargs: %s" % kwargs
 
-    return Package(type, url, version, subdir)
+    source = source.copy()
+    tt = source.pop('type')
+
+    if tt == 'git':
+        # remove dash in sub-dir
+        if 'sub-dir' in source:
+            source['subdir'] = source.pop('sub-dir')
+        return parse_source(key, tt, **source)
+    elif tt == 'system':
+        return parse_ros_system(key, **source)
+    else:
+        assert False, tt
 
 
-def parse_ros_system(name, **kwargs):
+def parse_system_target(key, name, **kwargs):
     assert not kwargs, "Unexpected kwargs: %s" % kwargs
 
-    return ROSSystem(name)
+    return System(key, name)
+
+
+def parse_redirect_target(key, name, **kwargs):
+    assert not kwargs, "Unexpected kwargs: %s" % kwargs
+
+    return Redirect(key, name)
+
+
+def parse_pip_target(key, name, **kwargs):
+    assert not kwargs, "Unexpected kwargs: %s" % kwargs
+
+    return Pip(key, name)
+
+
+def parse_source(key, type, url, version='master', subdir=None, **kwargs):
+    assert not kwargs, "Unexpected kwargs: %s" % kwargs
+
+    return Package(key, type, url, version, subdir)
+
+
+def parse_ros_system(key, name, **kwargs):
+    assert not kwargs, "Unexpected kwargs: %s" % kwargs
+
+    return ROSSystem(key, name)
 
 
 if __name__ == '__main__':
@@ -228,9 +236,9 @@ if __name__ == '__main__':
     rosdeps = []
     pkgs = {}
     for target in tqdm(targets):
-        basename, t = parse_target(target)
+        t = parse_target(target)
         if isinstance(t, MetaPackage):
-            mps[basename] = t
+            mps[t.key] = t
         elif isinstance(t, Package):
             url = t.url
             if url.endswith('.git'):
@@ -253,11 +261,7 @@ if __name__ == '__main__':
         else:
             assert False, t
 
-    #for p, dirs in pkgs.items():
-    #    print('\n%s:' % p)
-    #    for d in dirs:
-    #        print(d)
-
+    # first output meta packages
     mps_path = os.path.join(os.path.dirname(__file__), '..', 'tue_metapackages')
     mps_output = {}
     for name, mp in mps.items():
@@ -268,5 +272,6 @@ if __name__ == '__main__':
     with open(os.path.join(mps_path, 'deps.yaml'), 'w') as f:
         yaml.dump(mps_output, f, default_flow_style=False)
 
-    print('OK')
+    # then output packages
 
+    print('OK')
