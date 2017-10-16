@@ -273,5 +273,43 @@ if __name__ == '__main__':
         yaml.dump(mps_output, f, default_flow_style=False)
 
     # then output packages
+    pkgs_output = {}
+    for repo, pkgs in pkgs.items():
+        source = {}
+        for pkg in pkgs:
+            if not pkg.subdir:
+                assert pkg.key[4:] == repo
+            s = {
+                'type': pkg.type,
+                'url': pkg.url,
+                'version': pkg.version,
+            }
+            if source:
+                assert source == s
+            else:
+                source = s
+        pkgs_output[repo] = {
+            'packages': [pkg.key[4:] for pkg in pkgs],
+            'source': source,
+        }
+
+    pkgs_output['tue_metapackages'] = {
+        'packages': mps_output.keys(),
+        'source': {
+            'type': 'git',
+            'url': 'https://github.com/Rayman/rosdistro',
+            'version': 'master',
+        }
+    }
+
+    with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'distro.template')) as f:
+        template = f.read()
+
+    d = yaml.dump({'repositories': pkgs_output}, default_flow_style=False)
+    distro = template.format(repositories=d)
+
+    distro_path = os.path.join(os.path.dirname(__file__), '..', 'kinetic')
+    with open(os.path.join(distro_path, 'distribution.yaml'), 'w') as f:
+        f.write(distro)
 
     print('OK')
