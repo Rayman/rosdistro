@@ -8,7 +8,7 @@ import os
 from argparse import ArgumentParser
 from collections import namedtuple
 from copy import deepcopy
-from pprint import pformat
+from pprint import pprint, pformat
 
 import yaml
 from colorlog import ColoredFormatter
@@ -98,17 +98,18 @@ def parse_target(path):
         with open(os.path.join(path, 'install.bash')) as f:
             if ret:
                 logger.warn("also install.bash found for '%s'", basename)
-                return ret
             else:
-                return parse_target_bash(f.read())
+                ret = parse_target_bash(f.read())
     except IOError:
         if ret:
-            return ret
+            pass
         else:
             logger.debug('install.bash not found')
 
+    if ret:
+        return basename, ret
     logger.warn("no target found for '%s'", basename)
-    return None
+    return basename, None
 
 
 def parse_target_bash(f):
@@ -186,7 +187,10 @@ def parse_meta_target(targets):
     for target in targets:
         dep = parse_single_target(target)
         if isinstance(dep, Redirect):
-            deps.append(dep.name)
+            name = dep.name
+            if name.startswith('ros-'):
+                name = name[4:]
+            deps.append(name)
         elif isinstance(dep, System):
             deps.append(dep.name)
         else:
@@ -220,15 +224,22 @@ if __name__ == '__main__':
     targets = (os.path.join(target_path, o) for o in os.listdir(target_path))
     targets = [t for t in targets if os.path.isdir(t)]
 
-    mps = []
+    mps = {}
     rosdeps = []
-    pkgs = []
+    pkgs = {}
     for target in tqdm(targets):
-        t = parse_target(target)
+        basename, t = parse_target(target)
         if isinstance(t, MetaPackage):
-            mps.append(t)
+            mps[basename] = t
         elif isinstance(t, Package):
-            pkgs.append(t)
+            url = t.url
+            if url.endswith('.git'):
+                url = url[:-4]
+            _, _, last = url.rpartition('/')
+            if last in pkgs:
+                pkgs[last].append(t)
+            else:
+                pkgs[last] = [t]
         elif isinstance(t, System):
             rosdeps.append(t)
         elif isinstance(t, ROSSystem):
@@ -242,5 +253,20 @@ if __name__ == '__main__':
         else:
             assert False, t
 
-    for p in pkgs:
-        print(p)
+    #for p, dirs in pkgs.items():
+    #    print('\n%s:' % p)
+    #    for d in dirs:
+    #        print(d)
+
+    mps_path = os.path.join(os.path.dirname(__file__), '..', 'tue_metapackages')
+    mps_output = {}
+    for name, mp in mps.items():
+        name = name.replace('-', '_')
+        deps = [d.replace('-', '_') for d in mp.dependencies]
+        mps_output[name] = deps
+
+    with open(os.path.join(mps_path, 'deps.yaml'), 'w') as f:
+        yaml.dump(mps_output, f, default_flow_style=False)
+
+    print('OK')
+
