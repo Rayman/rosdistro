@@ -291,16 +291,16 @@ if __name__ == '__main__':
                 assert source == s
             else:
                 source = s
-        source['packages'] = [pkg.key[4:] for pkg in pkgs]
+        source['packages'] = sorted(pkg.key[4:] for pkg in pkgs)
         pkgs_output[repo] = {
             'source': source,
         }
 
     pkgs_output['tue_metapackages'] = {
         'source': {
-            'packages': mps_output.keys(),
+            'packages': sorted(mps_output.keys()),
             'type': 'git',
-            'url': 'https://github.com/Rayman/rosdistro',
+            'url': 'https://github.com/Rayman/tue_metapackages',
             'version': 'master',
         }
     }
