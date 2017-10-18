@@ -3,8 +3,10 @@
 # see REP 143: http://ros.org/reps/rep-0143.html
 ---
 distributions:
-  tuekinetic:
-    distribution: [kinetic/distribution.yaml]
-    distribution_cache: tuekinetic-cache.yaml.gz
+  kinetic:
+    distribution:
+    - https://raw.githubusercontent.com/ros/rosdistro/master/kinetic/distribution.yaml
+    - kinetic/distribution.yaml
+    distribution_cache: http://repositories.ros.org/rosdistro_cache/kinetic-cache.yaml.gz
 type: index
 version: 3
