@@ -152,6 +152,13 @@ repositories:
       type: git
       url: https://github.com/tue-robotics/ed_localization.git
       version: master
+  ed_msgs:
+    source:
+      packages:
+      - ed_msgs
+      type: git
+      url: https://github.com/tue-robotics/ed_msgs.git
+      version: master
   ed_navigation:
     source:
       packages:
@@ -267,8 +274,6 @@ repositories:
   hmi:
     source:
       packages:
-      - hmi_server
-      - hmi_zbar_server
       - hmi
       - hmi_msgs
       type: git
@@ -277,14 +282,14 @@ repositories:
   image_recognition:
     source:
       packages:
+      - image_recognition
+      - image_recognition_msgs
       - image_recognition_rqt
       - image_recognition_util
-      - tensorflow_ros_rqt
-      - skybiometry_ros
       - openpose_ros
-      - image_recognition_msgs
-      - image_recognition
+      - skybiometry_ros
       - tensorflow_ros
+      - tensorflow_ros_rqt
       type: git
       url: https://github.com/tue-robotics/image_recognition.git
       version: master
@@ -312,23 +317,23 @@ repositories:
   navigation:
     source:
       packages:
+      - amcl
+      - base_local_planner
       - carrot_planner
-      - rotate_recovery
+      - clear_costmap_recovery
+      - costmap_2d
       - dwa_local_planner
-      - voxel_grid
       - fake_localization
       - map_server
-      - clear_costmap_recovery
-      - nav_core
+      - move_base
+      - move_base_msgs
       - move_slow_and_clear
+      - nav_core
+      - navfn
       - navigation
       - robot_pose_ekf
-      - base_local_planner
-      - move_base_msgs
-      - amcl
-      - navfn
-      - costmap_2d
-      - move_base
+      - rotate_recovery
+      - voxel_grid
       type: git
       url: https://github.com/tue-robotics/navigation.git
       version: kinetic-devel
@@ -370,9 +375,9 @@ repositories:
   pi_trees:
     source:
       packages:
+      - pi_trees
       - pi_trees_lib
       - pi_trees_ros
-      - pi_trees
       type: git
       url: https://github.com/LoyVanBeek/pi_trees.git
       version: master
@@ -421,10 +426,10 @@ repositories:
   rosbridge_suite:
     source:
       packages:
-      - rosbridge_suite
+      - rosapi
       - rosbridge_library
       - rosbridge_server
-      - rosapi
+      - rosbridge_suite
       type: git
       url: https://github.com/tue-robotics/rosbridge_suite.git
       version: master
@@ -636,32 +641,32 @@ repositories:
   tue_metapackages:
     source:
       packages:
-      - sergio
-      - robot_user
-      - amigo_start
-      - amigo1
-      - tue_hardware
-      - amigo2
-      - amigo5
-      - amigo4
       - amigo
-      - tue_robocup_at_home
-      - networking
+      - amigo1
+      - amigo2
+      - amigo4
+      - amigo5
+      - amigo_start
+      - amigo_user
+      - audio
       - matthijs
-      - sergio_start
-      - sergio_user
+      - networking
+      - robot
+      - robot_user
+      - sergio
       - sergio1
       - sergio2
+      - sergio_start
+      - sergio_user
       - tue_common
       - tue_dev
-      - tue_tools
-      - amigo_user
-      - robot
-      - tue_middleware
       - tue_dev_full
-      - audio
+      - tue_hardware
+      - tue_middleware
+      - tue_robocup_at_home
+      - tue_tools
       type: git
-      url: https://github.com/Rayman/rosdistro
+      url: https://github.com/Rayman/tue_metapackages
       version: master
   tue_mobile_ui:
     source:
@@ -680,37 +685,37 @@ repositories:
   tue_robocup:
     source:
       packages:
-      - challenge_presentation
-      - robocup_knowledge
-      - challenge_person_recognition
-      - challenge_speech_recognition
-      - challenge_demo
-      - test_tools
-      - challenge_rips
-      - robot_skills
-      - challenge_wakemeup
-      - challenge_final
-      - challenge_robozoo_2015
-      - challenge_manipulation
-      - challenge_help_me_carry
-      - challenge_eegpsr
-      - challenge_robonurse
-      - challenge_open
-      - challenge_restaurant_2014
-      - challenge_navigation
-      - challenge_test
       - challenge_basic_functionalities
-      - tue_robocup
-      - robot_smach_states
-      - tue_rqt
-      - challenge_gpsr
-      - challenge_restaurant
-      - challenge_storing_groceries
-      - challenge_set_a_table
+      - challenge_demo
+      - challenge_eegpsr
+      - challenge_final
       - challenge_follow_me
       - challenge_following_and_guiding
-      - challenge_spr
+      - challenge_gpsr
+      - challenge_help_me_carry
+      - challenge_manipulation
+      - challenge_navigation
+      - challenge_open
+      - challenge_person_recognition
+      - challenge_presentation
+      - challenge_restaurant
+      - challenge_restaurant_2014
+      - challenge_rips
+      - challenge_robonurse
       - challenge_robozoo
+      - challenge_robozoo_2015
+      - challenge_set_a_table
+      - challenge_speech_recognition
+      - challenge_spr
+      - challenge_storing_groceries
+      - challenge_test
+      - challenge_wakemeup
+      - robocup_knowledge
+      - robot_skills
+      - robot_smach_states
+      - test_tools
+      - tue_robocup
+      - tue_rqt
       type: git
       url: https://github.com/tue-robotics/tue_robocup.git
       version: master
