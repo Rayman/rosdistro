@@ -122,11 +122,7 @@ def parse_target(path):
 
 
 def parse_target_bash(f):
-    lines = f.splitlines()
-    if len(lines) == 1:
-        logger.warn('unknown setup.bash')
-    else:
-        logger.info("complex install.bash found")
+    logger.info("skipping install.bash")
     return None
 
 
