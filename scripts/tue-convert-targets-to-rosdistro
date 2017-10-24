@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+import errno
 import logging
 import logging.config
-import os
 import os
 from argparse import ArgumentParser
 from collections import namedtuple
 from copy import deepcopy
+from glob import glob
 from pprint import pprint, pformat
+from shutil import copyfile
 
 import yaml
 from colorlog import ColoredFormatter
@@ -43,6 +45,16 @@ console.setFormatter(formatter)
 logging.getLogger().addHandler(console)
 
 logger = logging.getLogger(__name__)
+
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
 
 
 class Target(object):
@@ -310,5 +322,18 @@ if __name__ == '__main__':
     distro_path = os.path.join(os.path.dirname(__file__), '..', 'kinetic')
     with open(os.path.join(distro_path, 'distribution.yaml'), 'w') as f:
         f.write(distro)
+
+    # finally, copy all not blacklisted setup files
+    setup_path = os.path.join(mps_path, 'setup')
+    mkdir_p(setup_path)
+    for f in glob(os.path.join(target_path, '*/setup')):
+        basename = os.path.basename(os.path.dirname(f))
+        if basename.startswith('ros-'):
+            basename = basename[4:]
+        basename = basename.replace('-', '_')
+        if basename in mps_output:
+            logger.warn("metapackages can't contain env hooks: %s", basename)
+        else:
+            logger.warn("ignoring setup for non metapackage: %s", basename)
 
     print('OK')
