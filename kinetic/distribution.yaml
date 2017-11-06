@@ -15,6 +15,7 @@ repositories:
     source:
       packages:
       - action_server
+      - action_server_msgs
       type: git
       url: https://github.com/tue-robotics/action_server.git
       version: master
@@ -114,7 +115,7 @@ repositories:
       packages:
       - dialogflow_ros
       type: git
-      url: https://github.com:tue-robotics/dialogflow_ros.git
+      url: https://github.com/tue-robotics/dialogflow_ros.git
       version: master
   dml:
     source:
@@ -150,6 +151,13 @@ repositories:
       - ed_localization
       type: git
       url: https://github.com/tue-robotics/ed_localization.git
+      version: master
+  ed_moveit:
+    source:
+      packages:
+      - ed_moveit
+      type: git
+      url: https://github.com/tue-robotics/ed_moveit.git
       version: master
   ed_msgs:
     source:
@@ -652,6 +660,7 @@ repositories:
       - networking
       - robot
       - robot_user
+      - ros_ruby
       - sergio
       - sergio1
       - sergio2
@@ -684,11 +693,9 @@ repositories:
   tue_robocup:
     source:
       packages:
-      - challenge_basic_functionalities
       - challenge_demo
       - challenge_eegpsr
       - challenge_final
-      - challenge_follow_me
       - challenge_following_and_guiding
       - challenge_gpsr
       - challenge_help_me_carry
@@ -698,23 +705,18 @@ repositories:
       - challenge_person_recognition
       - challenge_presentation
       - challenge_restaurant
-      - challenge_restaurant_2014
       - challenge_rips
-      - challenge_robonurse
       - challenge_robozoo
-      - challenge_robozoo_2015
       - challenge_set_a_table
       - challenge_speech_recognition
       - challenge_spr
       - challenge_storing_groceries
       - challenge_test
-      - challenge_wakemeup
       - robocup_knowledge
       - robot_skills
       - robot_smach_states
       - test_tools
       - tue_robocup
-      - tue_rqt
       type: git
       url: https://github.com/tue-robotics/tue_robocup.git
       version: master
@@ -759,6 +761,13 @@ repositories:
       - virtual_cam
       type: git
       url: https://github.com/tue-robotics/virtual_cam.git
+      version: master
+  vizbox:
+    source:
+      packages:
+      - vizbox
+      type: git
+      url: https://github.com/LoyVanBeek/vizbox.git
       version: master
   wit_ros:
     source:
