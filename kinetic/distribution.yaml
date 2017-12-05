@@ -292,6 +292,7 @@ repositories:
       - image_recognition
       - image_recognition_msgs
       - image_recognition_rqt
+      - image_recognition_tools
       - image_recognition_util
       - openpose_ros
       - skybiometry_ros
@@ -672,6 +673,7 @@ repositories:
       - tue_hardware
       - tue_middleware
       - tue_robocup_at_home
+      - tue_save_map
       - tue_tools
       type: git
       url: https://github.com/Rayman/tue_metapackages
