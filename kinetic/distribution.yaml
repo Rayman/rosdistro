@@ -295,6 +295,7 @@ repositories:
       - image_recognition_tools
       - image_recognition_util
       - openpose_ros
+      - openface_ros
       - skybiometry_ros
       - tensorflow_ros
       - tensorflow_ros_rqt
