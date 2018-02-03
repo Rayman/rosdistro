@@ -779,6 +779,20 @@ repositories:
       type: git
       url: https://github.com/LoyVanBeek/wit_ros.git
       version: master
+  wire:
+    source:
+      packages:
+      - armadillo_matrix
+      - problib
+      - wire
+      - wire_core
+      - wire_msgs
+      - wire_state_estimators
+      - wire_tutorials
+      - wire_viz
+      type: git
+      url: https://github.com/tue-robotics/wire.git
+      version: master
 
 type: distribution
 version: 2
