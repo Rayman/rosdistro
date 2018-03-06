@@ -110,6 +110,13 @@ repositories:
       type: git
       url: https://github.com/tue-robotics/dashboard.git
       version: master
+  diagnostics:
+    source:
+      packages:
+      - diagnostic_updater
+      type: git
+      url: https://github.com/tue-robotics/diagnostics.git
+      version: master
   dialogflow_ros:
     source:
       packages:
@@ -222,12 +229,26 @@ repositories:
       type: git
       url: https://github.com/tue-robotics/ed_tutorials.git
       version: master
+  ed_wire:
+    source:
+      packages:
+      - ed_wire
+      type: git
+      url: https://github.com/tue-robotics/ed_wire.git
+      version: master
   emergency_speakup:
     source:
       packages:
       - emergency_speakup
       type: git
       url: https://github.com/tue-robotics/emergency_speakup.git
+      version: master
+  ethercat_interface:
+    source:
+      packages:
+      - ethercat_interface
+      type: git
+      url: https://github.com/tue-robotics/ethercat_interface.git
       version: master
   fast_simulator:
     source:
@@ -290,12 +311,11 @@ repositories:
     source:
       packages:
       - image_recognition
+      - image_recognition_analysis
       - image_recognition_msgs
       - image_recognition_rqt
-      - image_recognition_tools
       - image_recognition_util
       - openpose_ros
-      - openface_ros
       - skybiometry_ros
       - tensorflow_ros
       - tensorflow_ros_rqt
@@ -499,6 +519,13 @@ repositories:
       type: git
       url: https://github.com/tue-robotics/sergio_bringup.git
       version: master
+  sergio_control:
+    source:
+      packages:
+      - sergio_control
+      type: git
+      url: https://github.com/tue-robotics/sergio_control.git
+      version: master
   sergio_description:
     source:
       packages:
@@ -697,10 +724,8 @@ repositories:
     source:
       packages:
       - challenge_demo
-      - challenge_eegpsr
       - challenge_final
       - challenge_following_and_guiding
-      - challenge_gpsr
       - challenge_help_me_carry
       - challenge_manipulation
       - challenge_navigation
@@ -712,7 +737,6 @@ repositories:
       - challenge_robozoo
       - challenge_set_a_table
       - challenge_speech_recognition
-      - challenge_spr
       - challenge_storing_groceries
       - challenge_test
       - robocup_knowledge
@@ -772,13 +796,6 @@ repositories:
       type: git
       url: https://github.com/LoyVanBeek/vizbox.git
       version: master
-  wit_ros:
-    source:
-      packages:
-      - wit_ros
-      type: git
-      url: https://github.com/LoyVanBeek/wit_ros.git
-      version: master
   wire:
     source:
       packages:
@@ -792,6 +809,13 @@ repositories:
       - wire_viz
       type: git
       url: https://github.com/tue-robotics/wire.git
+      version: master
+  wit_ros:
+    source:
+      packages:
+      - wit_ros
+      type: git
+      url: https://github.com/LoyVanBeek/wit_ros.git
       version: master
 
 type: distribution
