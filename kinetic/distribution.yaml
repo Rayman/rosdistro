@@ -322,13 +322,6 @@ repositories:
       type: git
       url: https://github.com/tue-robotics/image_recognition.git
       version: master
-  kdl_parser:
-    source:
-      packages:
-      - kdl_parser
-      type: git
-      url: https://github.com/ros/kdl_parser.git
-      version: master
   kinect_driver:
     source:
       packages:
@@ -393,14 +386,6 @@ repositories:
       - node_alive
       type: git
       url: https://github.com/tue-robotics/node_alive.git
-      version: master
-  orocos_kinematics_dynamics:
-    source:
-      packages:
-      - orocos_kdl
-      - python_orocos_kdl
-      type: git
-      url: https://github.com/orocos/orocos_kinematics_dynamics.git
       version: master
   orogen:
     source:
