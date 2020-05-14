@@ -237,8 +237,7 @@ if __name__ == '__main__':
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
 
-    data_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'tue-env')
-    target_path = os.path.join(data_path, 'installer', 'targets')
+    target_path = os.path.join(os.path.dirname(__file__), '..', 'data', 'tue-env-targets')
 
     targets = (os.path.join(target_path, o) for o in os.listdir(target_path))
     targets = [t for t in targets if os.path.isdir(t)]
