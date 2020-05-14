@@ -115,6 +115,9 @@ def parse_target(path):
             ret = parse_target_yaml(basename, target)
     except IOError:
         pass
+    except TypeError as e:
+        logger.exception('skipping target %s of error', target, exc_info=parse_target_yaml)
+        return None
     try:
         with open(os.path.join(path, 'install.bash')) as f:
             if ret:
