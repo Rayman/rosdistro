@@ -763,7 +763,6 @@ repositories:
       - amigo_start
       - amigo_user
       - audio
-      - gazebo
       - git
       - git_hooks
       - gstreamer1.0
