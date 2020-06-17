@@ -333,13 +333,6 @@ repositories:
       type: git
       url: https://github.com/tue-robotics/head_ref.git
       version: master
-  head_ref_ed_client:
-    source:
-      packages:
-      - head_ref_ed_client
-      type: git
-      url: https://github.com/tue-robotics/head_ref_ed_client.git
-      version: master
   hero_bridge:
     source:
       packages:
