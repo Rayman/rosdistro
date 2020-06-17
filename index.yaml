@@ -8,5 +8,10 @@ distributions:
     - https://raw.githubusercontent.com/ros/rosdistro/master/kinetic/distribution.yaml
     - kinetic/distribution.yaml
     distribution_cache: http://repositories.ros.org/rosdistro_cache/kinetic-cache.yaml.gz
+  melodic:
+    distribution:
+    - https://raw.githubusercontent.com/ros/rosdistro/master/melodic/distribution.yaml
+    - melodic/distribution.yaml
+    distribution_cache: http://repositories.ros.org/rosdistro_cache/melodic-cache.yaml.gz
 type: index
 version: 3

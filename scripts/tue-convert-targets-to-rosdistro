@@ -231,6 +231,20 @@ def parse_ros_system(key, name, **kwargs):
 
     return ROSSystem(key, name)
 
+def write_distro_files(platform, distro):
+    with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'distro.template')) as f:
+        template = f.read()
+
+    rp = {'release_platforms': {'ubuntu': [platform]}}
+    rp = yaml.dump(rp, default_flow_style=False)
+
+    d = yaml.dump({'repositories': pkgs_output}, default_flow_style=False)
+    data = template.format(repositories=d, release_platforms=rp)
+
+    distro_path = os.path.join(os.path.dirname(__file__), '..', distro)
+    with open(os.path.join(distro_path, 'distribution.yaml'), 'w') as f:
+        f.write(data)
+
 
 if __name__ == '__main__':
     parser = ArgumentParser()
@@ -315,15 +329,10 @@ if __name__ == '__main__':
         }
     }
 
-    with open(os.path.join(os.path.dirname(__file__), '..', 'data', 'distro.template')) as f:
-        template = f.read()
 
-    d = yaml.dump({'repositories': pkgs_output}, default_flow_style=False)
-    distro = template.format(repositories=d)
 
-    distro_path = os.path.join(os.path.dirname(__file__), '..', 'kinetic')
-    with open(os.path.join(distro_path, 'distribution.yaml'), 'w') as f:
-        f.write(distro)
+    for (platform, distro) in {'xenial': 'kinetic', 'bionic': 'melodic'}.items():
+        write_distro_files(platform, distro)
 
     # finally, copy all not blacklisted setup files
     setup_path = os.path.join(mps_path, 'setup')
