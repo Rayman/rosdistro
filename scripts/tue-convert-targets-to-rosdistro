@@ -296,6 +296,10 @@ if __name__ == '__main__':
         deps = [d.replace('-', '_') for d in mp.dependencies]
         mps_output[name] = deps
 
+    with open(os.path.join(os.path.dirname(__file__), '..', 'blacklist.txt')) as f:
+        blacklist = set(f.read().splitlines())
+    mps_output = {name: mp for name, mp in mps_output.items() if name not in blacklist}
+
     with open(os.path.join(mps_path, 'deps.yaml'), 'w') as f:
         yaml.dump(mps_output, f, default_flow_style=False)
 
