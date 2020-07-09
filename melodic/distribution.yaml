@@ -427,7 +427,6 @@ repositories:
       - global_planner
       - map_server
       - move_base
-      - move_base_msgs
       - move_slow_and_clear
       - nav_core
       - navfn
@@ -756,9 +755,7 @@ repositories:
       - amigo_start
       - amigo_user
       - audio
-      - git
       - git_hooks
-      - gstreamer1.0
       - hero
       - hero1
       - hero1_common
@@ -774,7 +771,6 @@ repositories:
       - hero_user
       - libfftw3
       - networking
-      - nvidia_docker2
       - robot
       - robot_demo_user
       - ros
@@ -783,7 +779,6 @@ repositories:
       - ros_hsrb_full
       - ros_tmc_desktop_full
       - ros_tmc_msgs
-      - ruby
       - sergio
       - sergio1
       - sergio2
