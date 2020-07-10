@@ -448,8 +448,8 @@ repositories:
       packages:
       - orogen
       type: git
-      url: https://github.com/orocos-toolchain/orogen.git
-      version: toolchain-2.9
+      url: https://github.com/ruvu/orogen.git
+      version: fix/manifest
   people_recognition:
     source:
       packages:
@@ -536,8 +536,8 @@ repositories:
       - soem_beckhoff_drivers
       - soem_master
       type: git
-      url: https://github.com/orocos/rtt_soem.git
-      version: master
+      url: https://github.com/ruvu/rtt_soem.git
+      version: fix/remove-manifest
   rtt_tue_msgs:
     source:
       packages:
