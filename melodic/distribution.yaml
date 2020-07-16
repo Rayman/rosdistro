@@ -586,7 +586,7 @@ repositories:
       - sergio_description
       type: git
       url: https://github.com/tue-robotics/sergio_description.git
-      version: master
+      version: fix/meshes-rebased
   sergio_hardware:
     source:
       packages:
